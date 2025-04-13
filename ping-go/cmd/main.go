@@ -74,22 +74,20 @@ func main() {
 
 	var conn *grpc.ClientConn
 	var client pb.MessageClient
-	go func() {
-		for {
-			var err error
-			conn, err = grpc.NewClient(
-				targetSvc.Address+":"+targetSvc.Port,
-				grpc.WithTransportCredentials(insecure.NewCredentials()))
-			if err != nil {
-				log.Printf("Failed to connect to target service: %v", err)
-				continue
-			}
-			client = pb.NewMessageClient(conn)
-			log.Printf("Connected to target service: %s:%s\n", targetSvc.Address, targetSvc.Port)
-			return
+
+	for {
+		var err error
+		conn, err = grpc.NewClient(
+			targetSvc.Address+":"+targetSvc.Port,
+			grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			log.Printf("Failed to connect to target service: %v", err)
+			continue
 		}
-	}()
-	defer conn.Close()
+		client = pb.NewMessageClient(conn)
+		log.Printf("Connected to target service: %s:%s\n", targetSvc.Address, targetSvc.Port)
+		break
+	}
 
 	fileSize := os.Getenv("FILE_SIZE")
 	updateFrequencyStr := os.Getenv("UPDATE_FREQUENCY")

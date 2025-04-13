@@ -1,0 +1,81 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ping-go
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ping-go
+      skycluster.io/provider-identifier: os-scinet-zone-1
+  template:
+    metadata:
+      labels:
+        app: ping-go
+        skycluster.io/app-name: ping-pong
+        skycluster.io/managed-by: skycluster
+        skycluster.io/provider-identifier: os-scinet-zone-1
+    spec:
+      containers:
+      - name: ping-go
+        image: registry.skycluster.io/svc-ping:0.0.1
+        imagePullPolicy: Always
+        env:
+          - name: SVC_ADDR
+            value: svc-pong
+          - name: SVC_PORT
+            value: "50051"
+          - name: UPDATE_FREQUENCY
+            value: "120"
+      nodeSelector:
+        skycluster.io/provider-identifier: os-scinet-zone-1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pong-go
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pong-go
+      skycluster.io/provider-identifier: os-scinet-zone-1
+  template:
+    metadata:
+      labels:
+        app: pong-go
+        skycluster.io/app-name: ping-pong
+        skycluster.io/managed-by: skycluster
+        skycluster.io/provider-identifier: os-scinet-zone-1
+    spec:
+      containers:
+      - name: pong-go
+        image: registry.skycluster.io/svc-pong:0.0.1
+        imagePullPolicy: Always
+        env:
+          - name: SVC_ADDR
+            value: "0.0.0.0"
+          - name: SVC_PORT
+            value: "50051"
+        ports:
+        - containerPort: 50051
+          name: pong
+      nodeSelector:
+        skycluster.io/provider-identifier: os-scinet-zone-1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-pong
+  labels:
+    skycluster.io/app-name: ping-pong
+    skycluster.io/managed-by: skycluster
+spec:
+  selector:
+    app: pong-go
+  ports:
+    - name: app
+      port: 50051
+      targetPort: 50051
+---

@@ -59,7 +59,11 @@ func sendDataInit(client pb.MessageClient, fileSize string) {
 		log.Fatalf("Invalid FILE_SIZE value: %v. Using default value of 1MB.", err)
 		fileSizeInt = 1
 	}
-	sendData(client, fileSizeInt)
+	if err := sendData(client, fileSizeInt); err != nil {
+		log.Printf("Error sending data: %v", err)
+	} else {
+		log.Println("Data sent successfully.")
+	}
 }
 
 func main() {
@@ -113,6 +117,8 @@ func main() {
 			sendDataInit(*c, fileSize)
 		}
 	}(&client)
+
+	select {}
 
 	// metricAddr := os.Getenv("METRIC_ADDR")
 	// metricPort := os.Getenv("METRIC_PORT")

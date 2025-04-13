@@ -47,10 +47,11 @@ func main() {
 	}
 
 	// We listen on all interfaces
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", localSvc.Port))
+	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%s", localSvc.Address, localSvc.Port))
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
+	log.Printf("Listening on %s:%s\n", localSvc.Address, localSvc.Port)
 
 	grpcServer := grpc.NewServer()
 	pb.RegisterMessageServer(grpcServer, Server{})
@@ -61,6 +62,8 @@ func main() {
 			log.Fatalf("Failed to serve: %v", err)
 		}
 	}()
+
+	select {}
 
 	// metricAddr := os.Getenv("METRIC_ADDR")
 	// metricPort := os.Getenv("METRIC_PORT")

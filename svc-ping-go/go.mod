@@ -3,7 +3,7 @@ module github.com/etesami/ping-pong-go/ping-go
 go 1.23.4
 
 require (
-	github.com/etesami/ping-pong-go v0.0.0-20250413030916-f2fb7d3c1dfa
+	github.com/etesami/ping-pong-go v0.0.0-20250414042531-707fc0f9db96
 	google.golang.org/grpc v1.71.1
 )
 

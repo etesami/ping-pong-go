@@ -36,7 +36,6 @@ func generateRandomBytes(sizeMB float64) ([]byte, error) {
 func (s Server) SendData(ctx context.Context, recData *pb.Data) (*pb.Ack, error) {
 	st := time.Now()
 	recTimestamp := st.UnixMilli()
-	log.Printf("Received at [%s]: [%d]\n", st.Format("2006-01-02 15:04:05"), len(recData.Payload))
 
 	randomBytes, err := generateRandomBytes(s.ackSize)
 	if err != nil {
@@ -50,6 +49,8 @@ func (s Server) SendData(ctx context.Context, recData *pb.Data) (*pb.Ack, error)
 		ReceivedTimestamp:     strconv.Itoa(int(recTimestamp)),
 		AckSentTimestamp:      strconv.Itoa(int(time.Now().UnixMilli())),
 	}
+	log.Printf("Received at [%s]: [%.2f] KB, Sent Ack: [%.2f] KB\n",
+		st.Format("2006-01-02 15:04:05"), float64(len(recData.Payload))/1024, float64(len(ack.Payload))/1024)
 	return ack, nil
 }
 

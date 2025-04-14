@@ -43,8 +43,8 @@ func sendData(client pb.MessageClient, sizeMB float64) error {
 	if err != nil {
 		return fmt.Errorf("send data not successful: %v", err)
 	}
-	fileSize := float64(len(randomBytes)) / (1024 * 1024)
-	log.Printf("Sent [%.2f] bytes. Ack recevied, status: [%s]\n", fileSize, ack.Status)
+	fileSize := float64(len(randomBytes)) / (1024)
+	log.Printf("Sent [%.2f] KB. Ack recevied, status: [%s], Ack size: [%.2f] KB\n", fileSize, ack.Status, float64(len(ack.Payload))/1024)
 
 	return nil
 }
@@ -61,8 +61,6 @@ func sendDataInit(client pb.MessageClient, fileSize string) {
 	}
 	if err := sendData(client, fileSizeInt); err != nil {
 		log.Printf("Error sending data: %v", err)
-	} else {
-		log.Println("Data sent successfully.")
 	}
 }
 

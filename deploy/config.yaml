@@ -8,18 +8,18 @@ spec:
   selector:
     matchLabels:
       app: ping-go
-      skycluster.io/provider-identifier: os-scinet-zone-1
+      skycluster.io/provider-identifier: os-scinet-zone-2
   template:
     metadata:
       labels:
         app: ping-go
         skycluster.io/app-name: ping-pong
         skycluster.io/managed-by: skycluster
-        skycluster.io/provider-identifier: os-scinet-zone-1
+        skycluster.io/provider-identifier: os-scinet-zone-2
     spec:
       containers:
       - name: ping-go
-        image: registry.skycluster.io/svc-ping:0.0.3
+        image: registry.skycluster.io/svc-ping:0.0.4
         imagePullPolicy: Always
         env:
           - name: SVC_ADDR
@@ -27,11 +27,11 @@ spec:
           - name: SVC_PORT
             value: "50051"
           - name: FILE_SIZE
-            value: "1"
+            value: "1.0"
           - name: UPDATE_FREQUENCY
-            value: "120"
+            value: "10"
       nodeSelector:
-        skycluster.io/provider-identifier: os-scinet-zone-1
+        skycluster.io/provider-identifier: os-scinet-zone-2
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -53,13 +53,15 @@ spec:
     spec:
       containers:
       - name: pong-go
-        image: registry.skycluster.io/svc-pong:0.0.3
+        image: registry.skycluster.io/svc-pong:0.0.4
         imagePullPolicy: Always
         env:
           - name: SVC_ADDR
             value: "0.0.0.0"
           - name: SVC_PORT
             value: "50051"
+          - name: FILE_SIZE
+            value: "1.0"
         ports:
         - containerPort: 50051
           name: pong

@@ -2,35 +2,26 @@ package main
 
 import (
 	"context"
-	"crypto/rand"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"strconv"
 	"time"
 
 	api "github.com/etesami/ping-pong-go/api"
+	metrics "github.com/etesami/ping-pong-go/pkg/metric"
 	pb "github.com/etesami/ping-pong-go/pkg/protoc"
+	util "github.com/etesami/ping-pong-go/pkg/utils"
 
-	// "github.com/prometheus/client_golang/prometheus/promhttp"
-	// "google.golang.org/genproto/googleapis/api/metric"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func generateRandomBytes(sizeMB float64) ([]byte, error) {
-	size := int(sizeMB * 1024 * 1024)
-	randomBytes := make([]byte, size)
-	_, err := rand.Read(randomBytes)
-	if err != nil {
-		return nil, err
-	}
-	return randomBytes, nil
-}
-
 func sendData(client pb.MessageClient, sizeMB float64) error {
-	randomBytes, err := generateRandomBytes(sizeMB)
+	randomBytes, err := util.GenerateRandomBytes(sizeMB)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -74,6 +65,9 @@ func main() {
 		Port:    svcTargetPort,
 	}
 
+	m := &metrics.Metric{}
+	m.RegisterMetrics()
+
 	var conn *grpc.ClientConn
 	var client pb.MessageClient
 
@@ -110,17 +104,43 @@ func main() {
 	// Send data initially
 	sendDataInit(client, fileSize)
 
-	go func(c *pb.MessageClient) {
+	go func(c *pb.MessageClient, m *metrics.Metric) {
 		for range ticker.C {
+
+			go func(m *metrics.Metric) {
+				if *c == nil {
+					log.Printf("Client is not ready yet")
+					return
+				}
+				ping := &pb.Data{
+					Payload:       []byte("ping"),
+					SentTimestamp: fmt.Sprintf("%d", int(time.Now().UnixMilli())),
+				}
+				pong, err := (*c).CheckConnection(context.Background(), ping)
+				if err != nil {
+					log.Printf("Error checking connection: %v", err)
+					return
+				}
+				rtt, err := util.CalculateRtt(ping.SentTimestamp, pong.ReceivedTimestamp, pong.AckSentTimestamp, time.Now())
+				if err != nil {
+					log.Printf("Error calculating RTT: %v", err)
+					return
+				}
+				serverName := "ping-pong"
+				m.AddRttTime(serverName, float64(rtt)/1000.0)
+				log.Printf("RTT to [%s] service: [%.2f] ms\n", serverName, float64(rtt)/1000.0)
+
+			}(m)
+
 			sendDataInit(*c, fileSize)
 		}
-	}(&client)
+	}(&client, m)
 
-	select {}
+	// select {}
 
-	// metricAddr := os.Getenv("METRIC_ADDR")
-	// metricPort := os.Getenv("METRIC_PORT")
-	// http.Handle("/metrics", promhttp.Handler())
-	// log.Printf("Starting server on :%s\n", metricPort)
-	// http.ListenAndServe(fmt.Sprintf("%s:%s", metricAddr, metricPort), nil)
+	metricAddr := os.Getenv("METRIC_ADDR")
+	metricPort := os.Getenv("METRIC_PORT")
+	log.Printf("Starting server on %s:%s\n", metricAddr, metricPort)
+	http.Handle("/metrics", promhttp.Handler())
+	http.ListenAndServe(fmt.Sprintf("%s:%s", metricAddr, metricPort), nil)
 }

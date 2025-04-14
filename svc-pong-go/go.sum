@@ -4,6 +4,10 @@ github.com/etesami/ping-pong-go v0.0.0-20250414042324-fe752e32009e h1:stv2Q20LVC
 github.com/etesami/ping-pong-go v0.0.0-20250414042324-fe752e32009e/go.mod h1:MeUu79k1gsQzJYYjaNm+xH9NqdgmuFAPeYSUVyjOnrI=
 github.com/etesami/ping-pong-go v0.0.0-20250414042531-707fc0f9db96 h1:9ZGYtyahbwORPpX3vQkLsQ65SKiov6TE+kwYhowNAHc=
 github.com/etesami/ping-pong-go v0.0.0-20250414042531-707fc0f9db96/go.mod h1:MeUu79k1gsQzJYYjaNm+xH9NqdgmuFAPeYSUVyjOnrI=
+github.com/etesami/ping-pong-go v0.0.0-20250414054641-5eed6b6b0191 h1:qRe37TbEa0goLGZV6jumYkogPPps0yn2s4rA2adpTn0=
+github.com/etesami/ping-pong-go v0.0.0-20250414054641-5eed6b6b0191/go.mod h1:MeUu79k1gsQzJYYjaNm+xH9NqdgmuFAPeYSUVyjOnrI=
+github.com/etesami/ping-pong-go v0.0.0-20250414054753-9cc535c70b5c h1:aQamnJRq5PGHo7rPAtGq+V3LpDqG3tjLNJW71UdPj0s=
+github.com/etesami/ping-pong-go v0.0.0-20250414054753-9cc535c70b5c/go.mod h1:MeUu79k1gsQzJYYjaNm+xH9NqdgmuFAPeYSUVyjOnrI=
 github.com/go-logr/logr v1.4.2 h1:6pFjapn8bFcIbiKo3XT4j/BhANplGihG6tvd+8rYgrY=
 github.com/go-logr/logr v1.4.2/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
 github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=

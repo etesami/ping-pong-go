@@ -17,6 +17,8 @@ fi
 if [[ $ping -eq 1 ]]; then
   export SVC_ADDR="0.0.0.0"
   export SVC_PORT="50051"
+  export METRIC_ADDR="0.0.0.0"
+  export METRIC_PORT="9100"
   export FILE_SIZE="1.0"
   export UPDATE_FREQUENCY="10"
 fi

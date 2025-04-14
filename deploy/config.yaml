@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: ping-go
-        image: registry.skycluster.io/svc-ping:0.0.4
+        image: registry.skycluster.io/svc-ping:0.0.5
         imagePullPolicy: Always
         env:
           - name: SVC_ADDR
@@ -53,7 +53,7 @@ spec:
     spec:
       containers:
       - name: pong-go
-        image: registry.skycluster.io/svc-pong:0.0.4
+        image: registry.skycluster.io/svc-pong:0.0.5
         imagePullPolicy: Always
         env:
           - name: SVC_ADDR
@@ -61,7 +61,7 @@ spec:
           - name: SVC_PORT
             value: "50051"
           - name: FILE_SIZE
-            value: "1.0"
+            value: "0.250"
         ports:
         - containerPort: 50051
           name: pong

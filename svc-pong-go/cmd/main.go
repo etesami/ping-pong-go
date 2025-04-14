@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"crypto/rand"
 	"fmt"
 	"log"
 	"net"
@@ -11,7 +10,9 @@ import (
 	"time"
 
 	api "github.com/etesami/ping-pong-go/api"
+	// metrics "github.com/etesami/ping-pong-go/pkg/metric"
 	pb "github.com/etesami/ping-pong-go/pkg/protoc"
+	util "github.com/etesami/ping-pong-go/pkg/utils"
 
 	// "github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -23,21 +24,24 @@ type Server struct {
 	ackSize float64
 }
 
-func generateRandomBytes(sizeMB float64) ([]byte, error) {
-	size := int(sizeMB * 1024 * 1024)
-	randomBytes := make([]byte, size)
-	_, err := rand.Read(randomBytes)
-	if err != nil {
-		return nil, err
+// CheckConnection is a simple ping-pong method to respond for the health check
+func (s Server) CheckConnection(ctx context.Context, recData *pb.Data) (*pb.Ack, error) {
+	t := time.Now()
+	ack := &pb.Ack{
+		Status:                "pong",
+		Payload:               []byte("pong"),
+		OriginalSentTimestamp: recData.SentTimestamp,
+		ReceivedTimestamp:     fmt.Sprintf("%d", int(t.UnixMilli())),
+		AckSentTimestamp:      fmt.Sprintf("%d", int(t.UnixMilli())),
 	}
-	return randomBytes, nil
+	return ack, nil
 }
 
 func (s Server) SendData(ctx context.Context, recData *pb.Data) (*pb.Ack, error) {
 	st := time.Now()
 	recTimestamp := st.UnixMilli()
 
-	randomBytes, err := generateRandomBytes(s.ackSize)
+	randomBytes, err := util.GenerateRandomBytes(s.ackSize)
 	if err != nil {
 		log.Printf("Error generating random bytes: %v", err)
 		return nil, err
@@ -97,7 +101,7 @@ func main() {
 
 	// metricAddr := os.Getenv("METRIC_ADDR")
 	// metricPort := os.Getenv("METRIC_PORT")
+	// log.Printf("Starting server on %s:%s\n", metricAddr, metricPort)
 	// http.Handle("/metrics", promhttp.Handler())
-	// log.Printf("Starting server on :%s\n", metricPort)
 	// http.ListenAndServe(fmt.Sprintf("%s:%s", metricAddr, metricPort), nil)
 }

@@ -14,7 +14,7 @@ message Data {
 
 message Ack {
     string status = 1;
-    string payload = 2;
+    bytes payload = 2;
     string original_sent_timestamp = 3;
     string received_timestamp = 4;
     string ack_sent_timestamp = 5;

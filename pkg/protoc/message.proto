@@ -5,6 +5,8 @@ package ping_pong_go;
 service Message {
     rpc SendData(Data) returns (Ack);
     rpc SendDataReceiveAck(Data) returns (Ack);
+    // A simple RPC to send a ping to the server
+    rpc CheckConnection(Data) returns (Ack);
 }
 
 message Data {

@@ -44,11 +44,11 @@ build_all() {
   echo "Building all services..."
   PARENT_DIR=$(dirname "$(realpath "$0")")
 
-  cd $PARENT_DIR/../ping-go
+  cd $PARENT_DIR/../svc-ping-go
   go mod tidy
   docker build -t svc-ping:$v .
 
-  cd $PARENT_DIR/../pong-go
+  cd $PARENT_DIR/../svc-pong-go
   go mod tidy
   docker build -t svc-pong:$v .
 }

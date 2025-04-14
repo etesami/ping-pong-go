@@ -162,10 +162,11 @@ const file_message_proto_rawDesc = "" +
 	"\apayload\x18\x02 \x01(\fR\apayload\x126\n" +
 	"\x17original_sent_timestamp\x18\x03 \x01(\tR\x15originalSentTimestamp\x12-\n" +
 	"\x12received_timestamp\x18\x04 \x01(\tR\x11receivedTimestamp\x12,\n" +
-	"\x12ack_sent_timestamp\x18\x05 \x01(\tR\x10ackSentTimestamp2y\n" +
+	"\x12ack_sent_timestamp\x18\x05 \x01(\tR\x10ackSentTimestamp2\xb3\x01\n" +
 	"\aMessage\x121\n" +
 	"\bSendData\x12\x12.ping_pong_go.Data\x1a\x11.ping_pong_go.Ack\x12;\n" +
-	"\x12SendDataReceiveAck\x12\x12.ping_pong_go.Data\x1a\x11.ping_pong_go.AckB,Z*github.com/etesami/ping-pong-go/pkg/protocb\x06proto3"
+	"\x12SendDataReceiveAck\x12\x12.ping_pong_go.Data\x1a\x11.ping_pong_go.Ack\x128\n" +
+	"\x0fCheckConnection\x12\x12.ping_pong_go.Data\x1a\x11.ping_pong_go.AckB,Z*github.com/etesami/ping-pong-go/pkg/protocb\x06proto3"
 
 var (
 	file_message_proto_rawDescOnce sync.Once
@@ -187,10 +188,12 @@ var file_message_proto_goTypes = []any{
 var file_message_proto_depIdxs = []int32{
 	0, // 0: ping_pong_go.Message.SendData:input_type -> ping_pong_go.Data
 	0, // 1: ping_pong_go.Message.SendDataReceiveAck:input_type -> ping_pong_go.Data
-	1, // 2: ping_pong_go.Message.SendData:output_type -> ping_pong_go.Ack
-	1, // 3: ping_pong_go.Message.SendDataReceiveAck:output_type -> ping_pong_go.Ack
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	0, // 2: ping_pong_go.Message.CheckConnection:input_type -> ping_pong_go.Data
+	1, // 3: ping_pong_go.Message.SendData:output_type -> ping_pong_go.Ack
+	1, // 4: ping_pong_go.Message.SendDataReceiveAck:output_type -> ping_pong_go.Ack
+	1, // 5: ping_pong_go.Message.CheckConnection:output_type -> ping_pong_go.Ack
+	3, // [3:6] is the sub-list for method output_type
+	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

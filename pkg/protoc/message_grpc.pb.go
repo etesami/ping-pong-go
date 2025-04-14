@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	Message_SendData_FullMethodName           = "/ping_pong_go.Message/SendData"
 	Message_SendDataReceiveAck_FullMethodName = "/ping_pong_go.Message/SendDataReceiveAck"
+	Message_CheckConnection_FullMethodName    = "/ping_pong_go.Message/CheckConnection"
 )
 
 // MessageClient is the client API for Message service.
@@ -29,6 +30,8 @@ const (
 type MessageClient interface {
 	SendData(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Ack, error)
 	SendDataReceiveAck(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Ack, error)
+	// A simple RPC to send a ping to the server
+	CheckConnection(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Ack, error)
 }
 
 type messageClient struct {
@@ -59,12 +62,24 @@ func (c *messageClient) SendDataReceiveAck(ctx context.Context, in *Data, opts .
 	return out, nil
 }
 
+func (c *messageClient) CheckConnection(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Ack, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Ack)
+	err := c.cc.Invoke(ctx, Message_CheckConnection_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MessageServer is the server API for Message service.
 // All implementations must embed UnimplementedMessageServer
 // for forward compatibility.
 type MessageServer interface {
 	SendData(context.Context, *Data) (*Ack, error)
 	SendDataReceiveAck(context.Context, *Data) (*Ack, error)
+	// A simple RPC to send a ping to the server
+	CheckConnection(context.Context, *Data) (*Ack, error)
 	mustEmbedUnimplementedMessageServer()
 }
 
@@ -80,6 +95,9 @@ func (UnimplementedMessageServer) SendData(context.Context, *Data) (*Ack, error)
 }
 func (UnimplementedMessageServer) SendDataReceiveAck(context.Context, *Data) (*Ack, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendDataReceiveAck not implemented")
+}
+func (UnimplementedMessageServer) CheckConnection(context.Context, *Data) (*Ack, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckConnection not implemented")
 }
 func (UnimplementedMessageServer) mustEmbedUnimplementedMessageServer() {}
 func (UnimplementedMessageServer) testEmbeddedByValue()                 {}
@@ -138,6 +156,24 @@ func _Message_SendDataReceiveAck_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Message_CheckConnection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Data)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageServer).CheckConnection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Message_CheckConnection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageServer).CheckConnection(ctx, req.(*Data))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Message_ServiceDesc is the grpc.ServiceDesc for Message service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +188,10 @@ var Message_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendDataReceiveAck",
 			Handler:    _Message_SendDataReceiveAck_Handler,
+		},
+		{
+			MethodName: "CheckConnection",
+			Handler:    _Message_CheckConnection_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

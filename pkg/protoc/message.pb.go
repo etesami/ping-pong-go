@@ -76,9 +76,10 @@ func (x *Data) GetSentTimestamp() string {
 type Ack struct {
 	state                 protoimpl.MessageState `protogen:"open.v1"`
 	Status                string                 `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
-	OriginalSentTimestamp string                 `protobuf:"bytes,2,opt,name=original_sent_timestamp,json=originalSentTimestamp,proto3" json:"original_sent_timestamp,omitempty"`
-	ReceivedTimestamp     string                 `protobuf:"bytes,3,opt,name=received_timestamp,json=receivedTimestamp,proto3" json:"received_timestamp,omitempty"`
-	AckSentTimestamp      string                 `protobuf:"bytes,4,opt,name=ack_sent_timestamp,json=ackSentTimestamp,proto3" json:"ack_sent_timestamp,omitempty"`
+	Payload               string                 `protobuf:"bytes,2,opt,name=payload,proto3" json:"payload,omitempty"`
+	OriginalSentTimestamp string                 `protobuf:"bytes,3,opt,name=original_sent_timestamp,json=originalSentTimestamp,proto3" json:"original_sent_timestamp,omitempty"`
+	ReceivedTimestamp     string                 `protobuf:"bytes,4,opt,name=received_timestamp,json=receivedTimestamp,proto3" json:"received_timestamp,omitempty"`
+	AckSentTimestamp      string                 `protobuf:"bytes,5,opt,name=ack_sent_timestamp,json=ackSentTimestamp,proto3" json:"ack_sent_timestamp,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -120,6 +121,13 @@ func (x *Ack) GetStatus() string {
 	return ""
 }
 
+func (x *Ack) GetPayload() string {
+	if x != nil {
+		return x.Payload
+	}
+	return ""
+}
+
 func (x *Ack) GetOriginalSentTimestamp() string {
 	if x != nil {
 		return x.OriginalSentTimestamp
@@ -148,12 +156,13 @@ const file_message_proto_rawDesc = "" +
 	"\rmessage.proto\x12\fping_pong_go\"G\n" +
 	"\x04Data\x12\x18\n" +
 	"\apayload\x18\x01 \x01(\fR\apayload\x12%\n" +
-	"\x0esent_timestamp\x18\x02 \x01(\tR\rsentTimestamp\"\xb2\x01\n" +
+	"\x0esent_timestamp\x18\x02 \x01(\tR\rsentTimestamp\"\xcc\x01\n" +
 	"\x03Ack\x12\x16\n" +
-	"\x06status\x18\x01 \x01(\tR\x06status\x126\n" +
-	"\x17original_sent_timestamp\x18\x02 \x01(\tR\x15originalSentTimestamp\x12-\n" +
-	"\x12received_timestamp\x18\x03 \x01(\tR\x11receivedTimestamp\x12,\n" +
-	"\x12ack_sent_timestamp\x18\x04 \x01(\tR\x10ackSentTimestamp2y\n" +
+	"\x06status\x18\x01 \x01(\tR\x06status\x12\x18\n" +
+	"\apayload\x18\x02 \x01(\tR\apayload\x126\n" +
+	"\x17original_sent_timestamp\x18\x03 \x01(\tR\x15originalSentTimestamp\x12-\n" +
+	"\x12received_timestamp\x18\x04 \x01(\tR\x11receivedTimestamp\x12,\n" +
+	"\x12ack_sent_timestamp\x18\x05 \x01(\tR\x10ackSentTimestamp2y\n" +
 	"\aMessage\x121\n" +
 	"\bSendData\x12\x12.ping_pong_go.Data\x1a\x11.ping_pong_go.Ack\x12;\n" +
 	"\x12SendDataReceiveAck\x12\x12.ping_pong_go.Data\x1a\x11.ping_pong_go.AckB,Z*github.com/etesami/ping-pong-go/pkg/protocb\x06proto3"

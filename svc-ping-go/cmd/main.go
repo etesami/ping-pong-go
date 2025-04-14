@@ -19,8 +19,8 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func generateRandomBytes(sizeMB int64) ([]byte, error) {
-	size := sizeMB * 1024 * 1024
+func generateRandomBytes(sizeMB float64) ([]byte, error) {
+	size := int(sizeMB * 1024 * 1024)
 	randomBytes := make([]byte, size)
 	_, err := rand.Read(randomBytes)
 	if err != nil {
@@ -29,7 +29,7 @@ func generateRandomBytes(sizeMB int64) ([]byte, error) {
 	return randomBytes, nil
 }
 
-func sendData(client pb.MessageClient, sizeMB int64) error {
+func sendData(client pb.MessageClient, sizeMB float64) error {
 	randomBytes, err := generateRandomBytes(sizeMB)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -54,7 +54,7 @@ func sendDataInit(client pb.MessageClient, fileSize string) {
 		log.Println("FILE_SIZE environment variable not set. Using default value of 1 MB.")
 		fileSize = "1"
 	}
-	fileSizeInt, err := strconv.ParseInt(fileSize, 10, 64)
+	fileSizeInt, err := strconv.ParseFloat(fileSize, 10)
 	if err != nil {
 		log.Fatalf("Invalid FILE_SIZE value: %v. Using default value of 1MB.", err)
 		fileSizeInt = 1

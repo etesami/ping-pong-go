@@ -19,15 +19,21 @@ spec:
     spec:
       containers:
       - name: ping-go
-        image: registry.skycluster.io/svc-ping:0.0.5
+        image: registry.skycluster.io/svc-ping:0.0.6
         imagePullPolicy: Always
         env:
           - name: SVC_ADDR
             value: svc-pong
           - name: SVC_PORT
             value: "50051"
+          - name: METRIC_ADDR
+            value: 0.0.0.0
+          - name: METRIC_PORT
+            value: "9100"
+          - name: DISABLE_SEND_FILE
+            value: "true"
           - name: FILE_SIZE
-            value: "1.0"
+            value: "0.05"
           - name: UPDATE_FREQUENCY
             value: "10"
       nodeSelector:
@@ -53,7 +59,7 @@ spec:
     spec:
       containers:
       - name: pong-go
-        image: registry.skycluster.io/svc-pong:0.0.5
+        image: registry.skycluster.io/svc-pong:0.0.6
         imagePullPolicy: Always
         env:
           - name: SVC_ADDR
@@ -61,7 +67,7 @@ spec:
           - name: SVC_PORT
             value: "50051"
           - name: FILE_SIZE
-            value: "0.250"
+            value: "0.001"
         ports:
         - containerPort: 50051
           name: pong
@@ -74,6 +80,7 @@ metadata:
   name: svc-pong
   labels:
     skycluster.io/app-name: ping-pong
+    skycluster.io/service-type: grpc
     skycluster.io/managed-by: skycluster
 spec:
   selector:
@@ -83,3 +90,39 @@ spec:
       port: 50051
       targetPort: 50051
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-ping-metrics
+  labels:
+    skycluster.io/app-name: ping-pong
+    skycluster.io/service-type: ping
+    skycluster.io/managed-by: skycluster
+spec:
+  selector:
+    app: ping-go
+  ports:
+    - name: metrics
+      port: 9100
+      targetPort: 9100
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: ping-pong-metrics
+  namespace: prometheus
+spec:
+  endpoints:
+  - path: /metrics
+    port: metrics
+    scheme: http
+    interval: 10s
+    scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+    - default
+  selector:
+    matchLabels:
+      skycluster.io/app-name: ping-pong
+      skycluster.io/service-type: ping
+      skycluster.io/managed-by: skycluster

@@ -101,8 +101,17 @@ func main() {
 	ticker := time.NewTicker(time.Duration(updateFrequency) * time.Second)
 	defer ticker.Stop()
 
+	disableSendFile := os.Getenv("DISABLE_SEND_FILE")
+	disableSendFileBool := false
+	if disableSendFile == "true" {
+		log.Println("DISABLE_SEND_FILE environment variable is set to true. Not sending file.")
+		disableSendFileBool = true
+	}
+
 	// Send data initially
-	sendDataInit(client, fileSize)
+	if !disableSendFileBool {
+		sendDataInit(client, fileSize)
+	}
 
 	go func(c *pb.MessageClient, m *metrics.Metric) {
 		for range ticker.C {
@@ -132,7 +141,9 @@ func main() {
 
 			}(m)
 
-			sendDataInit(*c, fileSize)
+			if !disableSendFileBool {
+				sendDataInit(*c, fileSize)
+			}
 		}
 	}(&client, m)
 
